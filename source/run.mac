@@ -1,0 +1,14 @@
+/control/verbose 1
+/run/verbose 1
+/vis/verbose 1
+/process/verbose 1
+/tracking/verbose 1
+#
+/run/initialize
+/process/eLoss/verbose 1
+#
+/MySimulation/det/setDistanceX 30 cm 
+#
+/gun/particle mu-
+/gun/energy 3 GeV
+/run/beamOn 3
