@@ -6,11 +6,45 @@
 #include "G4Region.hh"
 #include "G4RunManager.hh"
 
-#define SIZE 20
-#define WORLD 10
-//Bar 1~9
-
 class MyDetectorMessenger;
+
+class MyDetectorConstruction : public G4VUserDetectorConstruction
+{ 
+  public:
+    MyDetectorConstruction();
+    virtual ~MyDetectorConstruction();
+    
+    G4VPhysicalVolume* DefineVolumes();
+    virtual G4VPhysicalVolume* Construct();		
+    
+    // void Update();
+    
+    // void SetDetMaterial()  work with messenger 
+
+  private:
+    void DefineMaterials();
+
+    MyDetectorMessenger*  fDetectorMessenger;   // messenger
+
+    G4bool checkOverlaps;
+
+    G4Material*        fWorldMaterial;   // pointer to the world  material
+    G4Material*        fDetMaterial;     // pointer to the detector  material
+
+    G4Box * solidWorld ;    
+    G4Box * solidDet   ;                  
+    
+    G4LogicalVolume* logicWorld;
+    G4LogicalVolume* logicDet;
+
+    G4VPhysicalVolume*  physcWorld;
+    G4VPhysicalVolume*  physcDet;
+
+    G4double world_size; 
+    G4double det_x, det_y, det_z;
+};
+
+#if 0
 
 class MyDetectorConstruction : public G4VUserDetectorConstruction
 {
@@ -30,9 +64,6 @@ class MyDetectorConstruction : public G4VUserDetectorConstruction
     MyDetectorMessenger*  fDetectorMessenger;   // messenger
 
     G4bool checkOverlaps = true;
-
-    G4double DX;
-    G4double DZ;
     
     //G4Box                * fSolid[SIZE];    //not using, only two
     //G4LogicalVolume      * fLogic[SIZE];    //not using, only two
@@ -44,9 +75,7 @@ class MyDetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* logicBar;
 
     G4VPhysicalVolume    * fPhysc[SIZE];    
-
-    G4double world_size; 
-    G4double bar_x, bar_y, bar_z;
 };
+#endif
 
 #endif

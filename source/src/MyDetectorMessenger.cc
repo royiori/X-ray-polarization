@@ -6,6 +6,33 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
 
+
+MyDetectorMessenger::MyDetectorMessenger(MyDetectorConstruction* Det)
+ : G4UImessenger(),
+   fDetectorConstruction(Det)
+{
+  if(verbose) G4cout << "MyDetectorMessenger::MyDetectorMessenger(MyDetectorConstruction* Det)" << G4endl;
+}
+
+MyDetectorMessenger::~MyDetectorMessenger()
+{
+  // delete fMyDirectory;
+  // delete fDetDirectory;
+
+  // add more if needed
+}
+
+void MyDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
+{
+#if 0
+  if(command ==)
+  {}
+  if(command ==) 
+  {}
+#endif  
+}
+
+#if 0
 MyDetectorMessenger::MyDetectorMessenger(MyDetectorConstruction* Det)
  : G4UImessenger(),
    fDetectorConstruction(Det)
@@ -49,3 +76,4 @@ void MyDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
   if(command == fDistanceZ) 
   { fDetectorConstruction->SetDistanceZ(fDistanceZ->GetNewDoubleValue(newValue)); }  
 }
+#endif

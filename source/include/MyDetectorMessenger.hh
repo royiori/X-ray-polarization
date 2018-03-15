@@ -9,6 +9,26 @@ class G4UIdirectory;
 class G4UIcmdWithAString;
 class G4UIcmdWithADoubleAndUnit;
 
+
+// Messenger class that defines commands for MyDetectorConstruction.
+
+class MyDetectorMessenger: public G4UImessenger
+{
+  public:
+    MyDetectorMessenger(MyDetectorConstruction* );
+    virtual ~MyDetectorMessenger();
+
+    virtual void SetNewValue(G4UIcommand*, G4String);
+
+  private:    
+    MyDetectorConstruction*  fDetectorConstruction;
+
+    G4UIdirectory*           fMyDirectory;
+    G4UIdirectory*           fDetDirectory;    
+    // new cmds
+};
+
+/*
 // Messenger class that defines commands for MyDetectorConstruction.
 
 class MyDetectorMessenger: public G4UImessenger
@@ -28,5 +48,5 @@ class MyDetectorMessenger: public G4UImessenger
     G4UIcmdWithADoubleAndUnit*      fDistanceX;
     G4UIcmdWithADoubleAndUnit*      fDistanceZ;
 };
-
+*/
 #endif

@@ -16,6 +16,8 @@ MyAnalysisManager::MyAnalysisManager()
   fEvent  = NULL;
 }
 
+// MyAnalysisManager::~MyAnalysisManager() {}
+
 void MyAnalysisManager::BeginOfRunAction()
 {
   if(verbose) G4cout << "====>MyAnalysisManager::BeginOfRunAction()" << G4endl;
@@ -41,14 +43,16 @@ void MyAnalysisManager::EndOfRunAction()
   fRootFp->Close();
 }
 
-void MyAnalysisManager::BeginOfEventAction(const G4Event* evt)
+void MyAnalysisManager::BeginOfEventAction(const G4Event*)
 {
   if(verbose) G4cout << "====>MyAnalysisManager::BeginOfEventAction(const G4Event* evt)" << G4endl;
   fEvent->MyClear();
 }
 
-void MyAnalysisManager::EndOfEventAction(const G4Event* evt)
+void MyAnalysisManager::EndOfEventAction(const G4Event*)
 {
-  // fTree->Fill();
+  if(verbose) G4cout << "====>MyAnalysisManager::EndOfEventAction(const G4Event* evt)" << G4endl;
+  if(fEvent->GetPhi()!=-1) fTree->Fill();
+  // fTree->Fill();  
   fEvent->MyClear();
 }

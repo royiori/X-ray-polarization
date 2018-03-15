@@ -16,8 +16,67 @@
 #include "G4SPSPosDistribution.hh"
 #include "Verbose.hh"
 
-#include "TF2.h"
 
+MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()
+{
+  if(verbose) G4cout<<"====>MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()"<<G4endl;
+
+  G4int n_particle = 1;
+  fParticleGun  = new G4ParticleGun(n_particle);
+
+  // default particle kinematic
+  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+  G4String particleName;
+  G4ParticleDefinition* particle
+    = particleTable->FindParticle(particleName="gamma");
+
+  fParticleGun->SetParticleDefinition(particle);
+  fParticleGun->SetParticleEnergy(2.*keV);
+  // energy?
+  // 2keV
+
+  G4double fPosZ=200;
+
+  fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., fPosZ));  
+  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
+}
+
+
+MyPrimaryGeneratorAction::~MyPrimaryGeneratorAction()
+{
+  delete fParticleGun;
+}
+
+void MyPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
+{
+  // This function is called at the begining of event  
+  if(verbose) G4cout<<"====>MyPrimaryGeneratorAction::GeneratePrimaries()"<<G4endl;
+
+  // G4double x0=0+X*(G4UniformRand()-0.5); 
+  // G4double y0=0+Y*(G4UniformRand()-0.5);
+
+  G4double z0 = -60.*cm;
+  fParticleGun->SetParticlePosition(G4ThreeVector(0,0,z0));
+
+  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0,0,1));
+
+  G4double energy = 2*keV;
+  fParticleGun->SetParticleEnergy(energy);
+
+  fParticleGun->SetParticlePolarization(G4ThreeVector(1,0,0));
+
+  fParticleGun->GeneratePrimaryVertex(anEvent);
+}
+  // position
+  // a random funtion
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+#if 0
 double gaisserr(double *x, double *par);
 
 MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()
@@ -38,7 +97,7 @@ MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
   fParticleGun->SetParticleEnergy(3.0*GeV);
 */
-    G4int n_particle = 1;
+  G4int n_particle = 1;
   fParticleGun  = new G4ParticleGun(n_particle);
 
   // default particle kinematic
@@ -55,6 +114,9 @@ MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()
   fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., fPosZ));  
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
 }
+#endif
+
+#if 0
 
 MyPrimaryGeneratorAction::~MyPrimaryGeneratorAction()
 {
@@ -105,7 +167,8 @@ void MyPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   fParticleGun->GeneratePrimaryVertex(anEvent);
 }
-
+#endif
+/*
 double gaisserr(double *x, double *par){
     double gaisser,emu, costh0;
     double  costh,en1, t115, t850, A0, gamma, p1,p2,p3,p4,p5;
@@ -131,4 +194,4 @@ double gaisserr(double *x, double *par){
     gaisser = A0*(pow(en1,-gamma))*( t115 + t850 );
     // --> cm^2 s sr GeV
     return gaisser;
-}
+}*/

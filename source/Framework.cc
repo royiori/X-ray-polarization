@@ -14,10 +14,13 @@
 
 #include "Randomize.hh"
 
-#include "QBBC.hh"
+#include "G4EmLivermorePolarizedPhysics.hh"
 #include "G4VModularPhysicsList.hh"
 
-G4int verbose = 1;
+#include "G4PhysListFactory.hh"
+#include "G4StepLimiterPhysics.hh"
+
+G4int verbose = 0;
 
 int main(int argc,char** argv)
 {
@@ -45,8 +48,31 @@ int main(int argc,char** argv)
   MyDetectorConstruction* detector = new MyDetectorConstruction;
   runManager->SetUserInitialization(detector);
 
-  // Physics list
-  G4VModularPhysicsList* physicsList = new QBBC;
+/////////////
+/////////////
+/////////////
+
+  // Physics ist
+  // G4VModularPhysicsList* physicsList = new QBBC;
+#if 1  
+  // fEmPhysicsList = new G4EmLivermorePolarizedPhysics();
+        
+//      G4VModularPhysicsList* phys = 0;
+//      phys = factory.GetReferencePhysList(physName"Emlivermore");
+//      phys->RegisterPhysics(new G4StepLimiterPhysics());
+//      runManager->SetUserInitialization(phys);
+//      G4cout<<"---> Loading "<<physName<<"."<<G4endl; 
+
+/* 
+  G4PhysListFactory factory;  
+  G4VModularPhysicsList* physicsList = factory.GetReferencePhysList("G4EmLivermorePolarizedPhysics");
+  physicsList->RegisterPhysics(new G4StepLimiterPhysics());  */
+#endif
+#if 1
+  G4VModularPhysicsList* physicsList = new G4VModularPhysicsList; 
+  physicsList->RegisterPhysics(new G4EmLivermorePolarizedPhysics);
+#endif
+
   physicsList->SetVerboseLevel(1);
   runManager->SetUserInitialization(physicsList);
     

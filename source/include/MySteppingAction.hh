@@ -8,7 +8,7 @@ class MyEventAction;
 
 class MySteppingAction : public G4UserSteppingAction
 {
-	public:
+  public:
     MySteppingAction();
     virtual ~MySteppingAction();
 

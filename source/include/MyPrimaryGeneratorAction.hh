@@ -5,6 +5,10 @@
 #include "G4ParticleGun.hh"
 #include "globals.hh"
 
+#include "TROOT.h"
+#include "TSystem.h"
+#include "TF2.h"
+
 class MyPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
 	public:

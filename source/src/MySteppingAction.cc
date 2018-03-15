@@ -2,16 +2,11 @@
 #include "MyEventAction.hh"
 #include "MyDetectorConstruction.hh"
 #include "MyAnalysisManager.hh"
-#include "SimEvent.hh"
 #include "Verbose.hh"
 
 #include "G4Step.hh"
 #include "G4RunManager.hh"
 
-//MySteppingAction::MySteppingAction(MyDetectorConstruction *DET, MyEventAction* eventAction)
-//: G4UserSteppingAction(),
-  //fDetector(DET),
-  //fEventAction(eventAction)
 MySteppingAction::MySteppingAction()
 : G4UserSteppingAction()
 {
@@ -21,17 +16,31 @@ MySteppingAction::MySteppingAction()
 MySteppingAction::~MySteppingAction()
 {}
 
+void MySteppingAction::UserSteppingAction(const G4Step*)
+{
+  if(verbose) G4cout<<"====>MySteppingAction::UserSteppingAction(const G4Step* step)"<<G4endl;
+}
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////
+#if 0 
 void MySteppingAction::UserSteppingAction(const G4Step* step)
 {
   if(verbose) G4cout<<"====>MySteppingAction::UserSteppingAction(const G4Step* step)"<<G4endl;
 
-#if 0
   // get volume of the current step
   G4LogicalVolume* volume
     = step->GetPreStepPoint()->GetTouchableHandle()
       ->GetVolume()->GetLogicalVolume();
-#endif
-#if 1
 //1
     // positions in the global coordinate system:
     G4StepPoint* PreStep  = step->GetPreStepPoint();
@@ -60,17 +69,6 @@ void MySteppingAction::UserSteppingAction(const G4Step* step)
 #endif
 
 #if 0
-test time methods:
-  local: since born
-  global: since track start
-  proper: relativity
-
-    G4double tp = step->GetPostStepPoint()->GetProperTime();//-1  first time
-    G4double tl = step->GetPostStepPoint()->GetLocalTime();//-1  first time
-    G4double tg = step->GetPostStepPoint()->GetGlobalTime();//-1  first time    
-    G4cout << "time:\t" <<  tp  << '\t' << tl << '\t' << tg << G4endl; 
-#endif
-
   // primary particle and shoot at detector, get time and position
   if(namePre == "World" && namePost.substr(0, 3) == "Bar" && aTrack->GetParentID() == 0) 
   {
@@ -90,6 +88,7 @@ test time methods:
     fEvt->AddTotalEdep(n, edep);
   }
 }
+#endif
 /*
      G4double phi  = step->GetTrack()->GetPosition().phi();
      G4double theta= step->GetTrack()->GetPosition().theta();
