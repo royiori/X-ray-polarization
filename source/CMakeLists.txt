@@ -101,8 +101,9 @@ target_link_libraries(SimEventDict  ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 add_executable(Framework Framework.cc ${sources} ${headers})
 target_link_libraries(Framework SimEventDict ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} Qt5::Widgets Qt5::DBus)
 
-add_executable(RootFileIO RootFileIO.cc ${sources} ${headers})
-target_link_libraries(RootFileIO SimEventDict ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} Qt5::Widgets Qt5::DBus)
+# Not needed?
+#add_executable(RootFileIO RootFileIO.cc ${sources} ${headers})
+#target_link_libraries(RootFileIO SimEventDict ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} Qt5::Widgets Qt5::DBus)
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we
@@ -113,6 +114,7 @@ set(FRAMEWORK_SCRIPTS
   init_vis.mac
   vis.mac
   run.mac
+  RootFileIO.C
   )
 
 foreach(_script ${FRAMEWORK_SCRIPTS})

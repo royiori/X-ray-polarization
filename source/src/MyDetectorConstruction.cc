@@ -1,5 +1,5 @@
 #include "MyDetectorConstruction.hh"
-#include "MyDetectorMessenger.hh"
+// #include "MyDetectorMessenger.hh"
 
 #include "G4Material.hh"
 #include "G4NistManager.hh"
@@ -31,7 +31,7 @@
 
 MyDetectorConstruction::MyDetectorConstruction()
 : G4VUserDetectorConstruction(),
-  fDetectorMessenger(0), checkOverlaps(0),
+  /*fDetectorMessenger(0),*/ checkOverlaps(0),
   fWorldMaterial(0), fDetMaterial(0),
   solidWorld(0), solidDet(0),
   logicWorld(0), logicDet(0), 
@@ -42,7 +42,7 @@ MyDetectorConstruction::MyDetectorConstruction()
   if(verbose) G4cout << "====>MyDetectorConstruction::MyDetectorConstruction()" << G4endl;
   
   // DefineMaterials();
-  fDetectorMessenger = new MyDetectorMessenger(this);
+  // fDetectorMessenger = new MyDetectorMessenger(this);
   
   // Material 
   G4String symbol;             //a=mass of a mole;
@@ -80,8 +80,8 @@ MyDetectorConstruction::MyDetectorConstruction()
   fDetMaterial = He_20_DME_80_P0_5;
 }
 
-MyDetectorConstruction::~MyDetectorConstruction()
-{ delete fDetectorMessenger; }
+MyDetectorConstruction::~MyDetectorConstruction(){}
+// { delete fDetectorMessenger; }
 
 G4VPhysicalVolume* MyDetectorConstruction::Construct()
 {

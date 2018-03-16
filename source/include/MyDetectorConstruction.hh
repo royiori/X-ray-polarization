@@ -6,8 +6,6 @@
 #include "G4Region.hh"
 #include "G4RunManager.hh"
 
-class MyDetectorMessenger;
-
 class MyDetectorConstruction : public G4VUserDetectorConstruction
 { 
   public:
@@ -24,7 +22,7 @@ class MyDetectorConstruction : public G4VUserDetectorConstruction
   private:
     void DefineMaterials();
 
-    MyDetectorMessenger*  fDetectorMessenger;   // messenger
+    // fDetectorMessenger
 
     G4bool checkOverlaps;
 

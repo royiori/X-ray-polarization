@@ -1,4 +1,5 @@
 #include "MyPrimaryGeneratorAction.hh"
+#include "MyGunMessenger.hh"
 
 #include "G4LogicalVolumeStore.hh"
 #include "G4LogicalVolume.hh"
@@ -16,11 +17,17 @@
 #include "G4SPSPosDistribution.hh"
 #include "Verbose.hh"
 
+#define PI 3.1415927
+using std::sin;
+using std::cos;
 
 MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()
+ : G4VUserPrimaryGeneratorAction(),
+  fGunMessenger(0), fParticleGun(0), alpha(0), beta(0), polar(0)
 {
-  if(verbose) G4cout<<"====>MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()"<<G4endl;
+  if(verbose) G4cout << "====>MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()" << G4endl;
 
+  fGunMessenger = new MyGunMessenger(this);
   G4int n_particle = 1;
   fParticleGun  = new G4ParticleGun(n_particle);
 
@@ -50,20 +57,37 @@ MyPrimaryGeneratorAction::~MyPrimaryGeneratorAction()
 void MyPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   // This function is called at the begining of event  
-  if(verbose) G4cout<<"====>MyPrimaryGeneratorAction::GeneratePrimaries()"<<G4endl;
+  if(verbose) G4cout << "====>MyPrimaryGeneratorAction::GeneratePrimaries()" << G4endl;
 
   // G4double x0=0+X*(G4UniformRand()-0.5); 
   // G4double y0=0+Y*(G4UniformRand()-0.5);
 
-  G4double z0 = -60.*cm;
+  G4double z0 = -0.5*cm;
   fParticleGun->SetParticlePosition(G4ThreeVector(0,0,z0));
+////////////////////////////////////////////////////////////////////////////////////////////////
+  // fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0,0,1));
+  // fParticleGun->SetParticlePolarization(G4ThreeVector(1,0,0));
+////////////////////////////////////////////////////////////////////////////////////////////////
 
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0,0,1));
+
+  //Spherical coordinate system
+  // alpha--theta beta--phi
+  // 2 degree vibration (amplitude), now just Uniform distribution, use Gaussian maybe
+  G4double alpha_ = alpha * (2*G4UniformRand()-1); 
+  G4double beta_ = beta, polar_ = polar;
+
+  // (cos(polar), sin(polar), 0)
+  G4ThreeVector direction   (sin(alpha_)*cos(beta_), sin(alpha_)*sin(beta_),  cos(alpha_));
+  // G4ThreeVector polarization(cos(alpha_)*cos(beta_), cos(alpha_)*sin(beta_), -sin(alpha_)); 
+  G4ThreeVector polarization (cos(alpha_)*cos(beta_)*cos(polar)-sin(beta_)*sin(polar_),
+                              cos(alpha_)*sin(beta_)*cos(polar)+cos(beta_)*sin(polar_),
+                             -sin(alpha_)*cos(polar_));
+  fParticleGun->SetParticleMomentumDirection(direction);
+  fParticleGun->SetParticlePolarization(polarization);
+////////////////////////////////////////////////////////////////////////////////////////////////
 
   G4double energy = 2*keV;
   fParticleGun->SetParticleEnergy(energy);
-
-  fParticleGun->SetParticlePolarization(G4ThreeVector(1,0,0));
 
   fParticleGun->GeneratePrimaryVertex(anEvent);
 }
@@ -73,7 +97,6 @@ void MyPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 #if 0

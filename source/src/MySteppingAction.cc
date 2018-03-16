@@ -10,7 +10,7 @@
 MySteppingAction::MySteppingAction()
 : G4UserSteppingAction()
 {
-  if(verbose) G4cout<<"====>MySteppingAction::MySteppingAction(MyDetectorConstruction *, MyEventAction *)"<<G4endl;
+  if(verbose) G4cout << "====>MySteppingAction::MySteppingAction(MyDetectorConstruction *, MyEventAction *)" << G4endl;
 }
 
 MySteppingAction::~MySteppingAction()
@@ -18,7 +18,7 @@ MySteppingAction::~MySteppingAction()
 
 void MySteppingAction::UserSteppingAction(const G4Step*)
 {
-  if(verbose) G4cout<<"====>MySteppingAction::UserSteppingAction(const G4Step* step)"<<G4endl;
+  if(verbose) G4cout << "====>MySteppingAction::UserSteppingAction(const G4Step* step)" << G4endl;
 }
 
 

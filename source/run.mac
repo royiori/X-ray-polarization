@@ -9,4 +9,6 @@
 #/gun/energy 3 Ge
 
 /run/initialize
-/run/beamOn 100000
+/MySimulation/gun/setAlpha 20
+/MySimulation/gun/setPolar 90
+/run/beamOn 1000000

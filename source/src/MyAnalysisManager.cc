@@ -4,7 +4,6 @@
 
 ClassImp(SimEvent);
 
-
 MyAnalysisManager* MyAnalysisManager::fInstance = 0;
 
 MyAnalysisManager::MyAnalysisManager()
