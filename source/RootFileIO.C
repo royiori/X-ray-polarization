@@ -7,6 +7,7 @@
 #include "iostream"
 
 #include "TH1.h"
+#include "TH2.h"
 #include "TF1.h"
 #include "TFitResult.h"
 #include "TStyle.h"
@@ -34,6 +35,11 @@ double the_sin2_fit(double *vars, double *pars){
 TF1 sin2_fit("sin2_fit",the_sin2_fit,0.,3.14,3);
 #endif
 TH1F h("h","PHI_FIT;Phi [rad];Entries [0.02]",157,0.,3.14);
+TH2F hxy("px-py","px-py;px [MeV/c];py [MeV/c]",100, -0.05, 0.05, 100, -0.05, 0.05);
+TH2F hxz("px-pz","px-pz;px [MeV/c];pz [MeV/c]",100, -0.05, 0.05, 100, -0.05, 0.05);
+TH2F hyz("py-pz","py-pz;py [MeV/c];pz [MeV/c]",100, -0.05, 0.05, 100, -0.05, 0.05);
+TH1F p2("momentum",";p [MeV/c];Entries [2.5*10^-4]",200,0.,0.05);
+
 // TH1F histo("histo","Signal plus background;X vals;Y Vals",50,0,20);
 
 void ReadRoot();
@@ -72,9 +78,11 @@ void ReadRoot()
   for(int i=0; i!=sz; ++i){  
     fTree1->GetEntry(i); 
     h.Fill(fEvent->GetPhi());
+    hxy.Fill(fEvent->GetMomentum().x(),fEvent->GetMomentum().y());
+    hxz.Fill(fEvent->GetMomentum().x(),fEvent->GetMomentum().z());
+    hyz.Fill(fEvent->GetMomentum().y(),fEvent->GetMomentum().z());
+    p2.Fill(sqrt(pow(fEvent->GetMomentum().x(),2)+pow(fEvent->GetMomentum().y(),2)+pow(fEvent->GetMomentum().z(),2)));
   }
-
-  // perform fit and retrieve fit results
   
   // auto fitResPtr = h.Fit(&cos_fit, "S"); //quiet ="q"
   auto fitResPtr = h.Fit(&sin2_fit, "S"); //quiet ="q"

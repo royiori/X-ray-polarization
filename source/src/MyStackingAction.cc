@@ -25,7 +25,7 @@ G4ClassificationOfNewTrack MyStackingAction::ClassifyNewTrack(const G4Track* aTr
 #if 1
   if(aTrack->GetParentID() == 1)
   {
-    G4ThreeVector tmp(aTrack->GetMomentumDirection());
+    G4ThreeVector tmp(aTrack->GetMomentum());
     TVector3 momentum(tmp.x(), tmp.y(), tmp.z());
     fEvt->SetMomentumGetPhi(momentum);
   }

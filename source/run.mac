@@ -6,9 +6,9 @@
 #/process/eLoss/verbose 1
 
 #/gun/particle gamma
-#/gun/energy 3 Ge
 
 /run/initialize
-/MySimulation/gun/setAlpha 20
-/MySimulation/gun/setPolar 90
+/MySimulation/gun/setAlpha 10
+#/MySimulation/gun/setPolar 90/
+#/MySimulation/gun/setPolar 90
 /run/beamOn 1000000
