@@ -8,7 +8,4 @@
 #/gun/particle gamma
 
 /run/initialize
-/MySimulation/gun/setAlpha 10
-#/MySimulation/gun/setPolar 90/
-#/MySimulation/gun/setPolar 90
 /run/beamOn 1000000

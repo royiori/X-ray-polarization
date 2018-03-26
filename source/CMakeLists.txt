@@ -67,7 +67,7 @@ endif()
 #----------------------------------------------------------------------------
 # Find QT (required package)   
 #
-find_package(Qt5 COMPONENTS Widgets DBus REQUIRED)
+find_package(Qt COMPONENTS Widgets DBus REQUIRED)
 
 #----------------------------------------------------------------------------
 # executable requires shared libraries
@@ -99,7 +99,8 @@ target_link_libraries(SimEventDict  ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 # Add the executable, and link it to the Geant4 libraries
 #
 add_executable(Framework Framework.cc ${sources} ${headers})
-target_link_libraries(Framework SimEventDict ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} Qt5::Widgets Qt5::DBus)
+target_link_libraries(Framework SimEventDict ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} Qt5::Widgets)
+#Qt5::DBus)
 
 # Not needed?
 #add_executable(RootFileIO RootFileIO.cc ${sources} ${headers})
