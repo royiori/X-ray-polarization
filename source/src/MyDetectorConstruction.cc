@@ -31,17 +31,246 @@
 
 MyDetectorConstruction::MyDetectorConstruction()
 : G4VUserDetectorConstruction(),
-  /*fDetectorMessenger(0),*/ checkOverlaps(0),
-  fWorldMaterial(0), fDetMaterial(0),
-  solidWorld(0), solidDet(0),
-  logicWorld(0), logicDet(0), 
-  physcWorld(0), physcDet(0),
-  world_size(1.*cm),
-  det_x(0.4*cm), det_y(0.4*cm), det_z(0.2*cm)
+ checkOverlaps(false)
+{
+  // Init
+  for(int i=0;i<SIZE;i++) fDetPar[i] = new MyDetectorParameters();
+  for(int i=0;i<SIZE;i++) fSolid[i]  = 0;  
+  for(int i=0;i<SIZE;i++) fLogic[i]  = 0;  
+  for(int i=0;i<SIZE;i++) fPhysc[i]  = 0;    
+  
+////////////////////////////////////////////////////////////////////////////////////////////////////////  
+// MATERIAL!!!!!!
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////  
+G4double thickness=3*mm; //(1-10)
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+  fDetPar[_WORLD]->Name   = "World";
+  fDetPar[_WORLD]->Matt   = "G4_Galactic";
+  fDetPar[_WORLD]->Siz[0] = 100*mm; 
+  fDetPar[_WORLD]->Siz[1] = 100*mm; 
+  fDetPar[_WORLD]->Siz[2] = 100*mm;
+  fDetPar[_WORLD]->Pos[0] = 0*mm;
+  fDetPar[_WORLD]->Pos[1] = 0*mm;
+  fDetPar[_WORLD]->Pos[2] = 0*mm;
+  fDetPar[_WORLD]->visAtt = new G4VisAttributes(G4Colour(1.0,1.0,1.0,0.4));
+  fDetPar[_WORLD]->Material = NULL;
+  
+  fDetPar[_GAS]->Name   = "Gas";
+  fDetPar[_GAS]->Matt   = "He_20_DME_80";
+  fDetPar[_GAS]->Siz[0] = 7.5*mm; 
+  fDetPar[_GAS]->Siz[1] = 7.5*mm; 
+  fDetPar[_GAS]->Siz[2] = 5*mm;
+  fDetPar[_GAS]->Pos[0] = 0*mm;
+  fDetPar[_GAS]->Pos[1] = 0*mm;
+  fDetPar[_GAS]->Pos[2] = 0*mm;
+  fDetPar[_GAS]->visAtt = new G4VisAttributes(G4Colour(0.1, 0.9, 0.7,0.4));
+  fDetPar[_GAS]->Material = NULL;
+
+  fDetPar[_CERAMICS]->Name   = "Ceramics";
+  fDetPar[_CERAMICS]->Matt   = "ceramics";
+  fDetPar[_CERAMICS]->Siz[0] = 12.5*mm; 
+  fDetPar[_CERAMICS]->Siz[1] = 12.5*mm; 
+  fDetPar[_CERAMICS]->Siz[2] = 5*mm;
+  fDetPar[_CERAMICS]->Pos[0] = 0*mm;
+  fDetPar[_CERAMICS]->Pos[1] = 0*mm;
+  fDetPar[_CERAMICS]->Pos[2] = (40-thickness)/2 *mm;
+  fDetPar[_CERAMICS]->visAtt = new G4VisAttributes(G4Colour(1,1,0.3,0.4));
+  fDetPar[_CERAMICS]->Material = NULL;
+
+  fDetPar[_WINDOW]->Name = "Be";
+  fDetPar[_WINDOW]->Matt = "G4_Be";
+  fDetPar[_WINDOW]->Siz[0] = 7.5*mm; 
+  fDetPar[_WINDOW]->Siz[1] = 7.5*mm; 
+  // fDetPar[_WINDOW]->Siz[2] = 0.05*mm;
+  G4double thickness_Be = 0.05*mm;
+  fDetPar[_WINDOW]->Siz[2] = thickness_Be;
+  fDetPar[_WINDOW]->Pos[0] = 0*mm;
+  fDetPar[_WINDOW]->Pos[1] = 0*mm;
+  fDetPar[_WINDOW]->Pos[2] = (20-thickness_Be) *mm;
+  fDetPar[_WINDOW]->visAtt = new G4VisAttributes(G4Colour(1,0,0.3,0.4));
+  fDetPar[_WINDOW]->Material = NULL;
+  
+
+  fDetPar[_SCOPE_INNER]->Name   = "Scope_I";
+  fDetPar[_SCOPE_INNER]->Matt   = "G4_Galactic";
+  fDetPar[_SCOPE_INNER]->Siz[0] = 7.5*mm; 
+  fDetPar[_SCOPE_INNER]->Siz[1] = 7.5*mm; 
+  fDetPar[_SCOPE_INNER]->Siz[2] = 20*mm;
+  fDetPar[_SCOPE_INNER]->Pos[0] = 0*mm;
+  fDetPar[_SCOPE_INNER]->Pos[1] = 0*mm;
+  fDetPar[_SCOPE_INNER]->Pos[2] = 0*mm;
+  fDetPar[_SCOPE_INNER]->visAtt = new G4VisAttributes(G4Colour(1, 1, 1,0.4));
+  fDetPar[_SCOPE_INNER]->Material = NULL;  
+
+  fDetPar[_SCOPE_OUTER]->Name   = "Scope_O";
+  fDetPar[_SCOPE_OUTER]->Matt   = "G4_Al";
+  fDetPar[_SCOPE_OUTER]->Siz[0] = (7.5+thickness) *mm; 
+  fDetPar[_SCOPE_OUTER]->Siz[1] = (7.5+thickness) *mm; 
+  fDetPar[_SCOPE_OUTER]->Siz[2] = 20*mm;
+  fDetPar[_SCOPE_OUTER]->Pos[0] = 0*mm;
+  fDetPar[_SCOPE_OUTER]->Pos[1] = 0*mm;
+  fDetPar[_SCOPE_OUTER]->Pos[2] = -(10+thickness)/2 *mm;
+  fDetPar[_SCOPE_OUTER]->visAtt = new G4VisAttributes(G4Colour(1, 1, 1,0.4));
+  fDetPar[_SCOPE_OUTER]->Material = NULL;  
+
+  fDetPar[_SHELL_INNER]->Name   = "Shell_I";
+  fDetPar[_SHELL_INNER]->Matt   = "G4_Galactic";
+  fDetPar[_SHELL_INNER]->Siz[0] = (50-thickness)/2 *mm; 
+  fDetPar[_SHELL_INNER]->Siz[1] = (50-thickness)/2 *mm; 
+  fDetPar[_SHELL_INNER]->Siz[2] = (50-thickness)/2 *mm;
+  fDetPar[_SHELL_INNER]->Pos[0] = 0*mm;
+  fDetPar[_SHELL_INNER]->Pos[1] = 0*mm;
+  fDetPar[_SHELL_INNER]->Pos[2] = 0*mm;
+  fDetPar[_SHELL_INNER]->visAtt = new G4VisAttributes(G4Colour(1, 1, 1,0.4));
+  fDetPar[_SHELL_INNER]->Material = NULL;  
+
+  fDetPar[_SHELL_OUTER]->Name   = "Shell_O";
+  fDetPar[_SHELL_OUTER]->Matt   = "G4_Al";
+  fDetPar[_SHELL_OUTER]->Siz[0] = (50+thickness)/2 *mm;
+  fDetPar[_SHELL_OUTER]->Siz[1] = (50+thickness)/2 *mm; 
+  fDetPar[_SHELL_OUTER]->Siz[2] = (50+thickness)/2 *mm;
+  fDetPar[_SHELL_OUTER]->Pos[0] = 0*mm;
+  fDetPar[_SHELL_OUTER]->Pos[1] = 0*mm;
+  fDetPar[_SHELL_OUTER]->Pos[2] = -(40-thickness)/2 *mm;
+  fDetPar[_SHELL_OUTER]->visAtt = new G4VisAttributes(G4Colour(1, 1, 1,0.4));
+  fDetPar[_SHELL_OUTER]->Material = NULL;        
+
+  DefineMaterials();
+
+  SetMaterial(_WORLD,       fDetPar[_WORLD]->Matt);
+  SetMaterial(_GAS,         fDetPar[_GAS]->Matt);
+  SetMaterial(_CERAMICS,    fDetPar[_CERAMICS]->Matt);
+  SetMaterial(_WINDOW,      fDetPar[_WINDOW]->Matt);
+  SetMaterial(_SCOPE_INNER, fDetPar[_SCOPE_INNER]->Matt);
+  SetMaterial(_SCOPE_OUTER, fDetPar[_SCOPE_OUTER]->Matt);
+  SetMaterial(_SHELL_INNER, fDetPar[_SHELL_INNER]->Matt);
+  SetMaterial(_SHELL_OUTER, fDetPar[_SCOPE_OUTER]->Matt);
+
+}
+
+
+MyDetectorConstruction::~MyDetectorConstruction()
+{}
+// { delete fDetectorMessenger; }
+
+G4VPhysicalVolume* MyDetectorConstruction::Construct()
+{
+  if(verbose) G4cout << "====>MyDetectorConstruction::Construct()" << G4endl;
+  return DefineVolumes();  
+}
+
+G4VPhysicalVolume* MyDetectorConstruction::DefineVolumes()
+{
+  if(verbose) G4cout << "====>MyDetectorConstruction::DefineVolumes()" << G4endl;
+
+  // Cleanup old geometry
+  G4GeometryManager::GetInstance()->OpenGeometry();
+  G4PhysicalVolumeStore::GetInstance()->Clean();
+  G4LogicalVolumeStore::GetInstance()->Clean();
+  G4SolidStore::GetInstance()->Clean();
+
+  //From outside to inside
+  fSolid[_WORLD] = new G4Box(fDetPar[_WORLD]->Name, 
+      fDetPar[_WORLD]->Siz[0], fDetPar[_WORLD]->Siz[1], fDetPar[_WORLD]->Siz[2]);
+  // fLogic[_WORLD] = new G4LogicalVolume(fSolid[_WORLD], G4NistManager::Instance()->FindOrBuildMaterial("G4_Ar"), "World");
+  //fDetPar[_WORLD]->Material, fDetPar[_WORLD]->Name);
+  fLogic[_WORLD] = new G4LogicalVolume(fSolid[_WORLD], fDetPar[_WORLD]->Material, fDetPar[_WORLD]->Name);
+  fPhysc[_WORLD] = new G4PVPlacement(0, 
+      G4ThreeVector(fDetPar[_WORLD]->Pos[0], fDetPar[_WORLD]->Pos[1], fDetPar[_WORLD]->Pos[2]), 
+      fLogic[_WORLD], fDetPar[_WORLD]->Name, 0, false, 0, checkOverlaps);
+// SHELL OUT
+// SHELL IN
+  fSolid[_SHELL_OUTER] = new G4Box(fDetPar[_SHELL_OUTER]->Name,
+      fDetPar[_SHELL_OUTER]->Siz[0], fDetPar[_SHELL_OUTER]->Siz[1], fDetPar[_SHELL_OUTER]->Siz[2]);
+  fLogic[_SHELL_OUTER] = new G4LogicalVolume(fSolid[_SHELL_OUTER], fDetPar[_SHELL_OUTER]->Material, fDetPar[_SHELL_OUTER]->Name);
+  fPhysc[_SHELL_OUTER] = new G4PVPlacement(0,
+      G4ThreeVector(fDetPar[_SHELL_OUTER]->Pos[0], fDetPar[_SHELL_OUTER]->Pos[1], fDetPar[_SHELL_OUTER]->Pos[2]),
+      fLogic[_SHELL_OUTER], fDetPar[_SHELL_OUTER]->Name, fLogic[_WORLD], false, 0, checkOverlaps);      
+  
+  fSolid[_SHELL_INNER] = new G4Box(fDetPar[_SHELL_INNER]->Name,
+      fDetPar[_SHELL_INNER]->Siz[0], fDetPar[_SHELL_INNER]->Siz[1], fDetPar[_SHELL_INNER]->Siz[2]);
+  fLogic[_SHELL_INNER] = new G4LogicalVolume(fSolid[_SHELL_INNER], fDetPar[_SHELL_INNER]->Material, fDetPar[_SHELL_INNER]->Name);
+  fPhysc[_SHELL_INNER] = new G4PVPlacement(0,
+      G4ThreeVector(fDetPar[_SHELL_INNER]->Pos[0], fDetPar[_SHELL_INNER]->Pos[1], fDetPar[_SHELL_INNER]->Pos[2]),
+      fLogic[_SHELL_INNER], fDetPar[_SHELL_INNER]->Name, fLogic[_SHELL_OUTER], false, 0, checkOverlaps);            
+//
+  fSolid[_SCOPE_OUTER] = new G4Box(fDetPar[_SCOPE_OUTER]->Name,
+      fDetPar[_SCOPE_OUTER]->Siz[0], fDetPar[_SCOPE_OUTER]->Siz[1], fDetPar[_SCOPE_OUTER]->Siz[2]);
+  fLogic[_SCOPE_OUTER] = new G4LogicalVolume(fSolid[_SCOPE_OUTER], fDetPar[_SCOPE_OUTER]->Material, fDetPar[_SCOPE_OUTER]->Name);
+  fPhysc[_SCOPE_OUTER] = new G4PVPlacement(0,
+      G4ThreeVector(fDetPar[_SCOPE_OUTER]->Pos[0], fDetPar[_SCOPE_OUTER]->Pos[1], fDetPar[_SCOPE_OUTER]->Pos[2]),
+      fLogic[_SCOPE_OUTER], fDetPar[_SCOPE_OUTER]->Name, fLogic[_SHELL_OUTER], false, 0, checkOverlaps);   
+
+  fSolid[_SCOPE_INNER] = new G4Box(fDetPar[_SCOPE_INNER]->Name,
+      fDetPar[_SCOPE_INNER]->Siz[0], fDetPar[_SCOPE_INNER]->Siz[1], fDetPar[_SCOPE_INNER]->Siz[2]);
+  fLogic[_SCOPE_INNER] = new G4LogicalVolume(fSolid[_SCOPE_INNER], fDetPar[_SCOPE_INNER]->Material, fDetPar[_SCOPE_INNER]->Name);
+  fPhysc[_SCOPE_INNER] = new G4PVPlacement(0,
+      G4ThreeVector(fDetPar[_SCOPE_INNER]->Pos[0], fDetPar[_SCOPE_INNER]->Pos[1], fDetPar[_SCOPE_INNER]->Pos[2]),
+      fLogic[_SCOPE_INNER], fDetPar[_SCOPE_INNER]->Name, fLogic[_SCOPE_OUTER], false, 0, checkOverlaps);   
+//
+  fSolid[_WINDOW] = new G4Box(fDetPar[_WINDOW]->Name,
+      fDetPar[_WINDOW]->Siz[0], fDetPar[_WINDOW]->Siz[1], fDetPar[_WINDOW]->Siz[2]);
+  fLogic[_WINDOW] = new G4LogicalVolume(fSolid[_WINDOW], fDetPar[_WINDOW]->Material, fDetPar[_WINDOW]->Name);
+  fPhysc[_WINDOW] = new G4PVPlacement(0,
+      G4ThreeVector(fDetPar[_WINDOW]->Pos[0], fDetPar[_WINDOW]->Pos[1], fDetPar[_WINDOW]->Pos[2]),
+      fLogic[_WINDOW], fDetPar[_WINDOW]->Name, fLogic[_SCOPE_INNER], false, 0, checkOverlaps);   
+
+  fSolid[_CERAMICS] = new G4Box(fDetPar[_CERAMICS]->Name,
+      fDetPar[_CERAMICS]->Siz[0], fDetPar[_CERAMICS]->Siz[1], fDetPar[_CERAMICS]->Siz[2]);
+  fLogic[_CERAMICS] = new G4LogicalVolume(fSolid[_CERAMICS], fDetPar[_CERAMICS]->Material, fDetPar[_CERAMICS]->Name);
+  fPhysc[_CERAMICS] = new G4PVPlacement(0,
+      G4ThreeVector(fDetPar[_CERAMICS]->Pos[0], fDetPar[_CERAMICS]->Pos[1], fDetPar[_CERAMICS]->Pos[2]),
+      fLogic[_CERAMICS], fDetPar[_CERAMICS]->Name, fLogic[_SHELL_INNER], false, 0, checkOverlaps);   
+
+  fSolid[_GAS] = new G4Box(fDetPar[_GAS]->Name,
+      fDetPar[_GAS]->Siz[0], fDetPar[_GAS]->Siz[1], fDetPar[_GAS]->Siz[2]);
+  fLogic[_GAS] = new G4LogicalVolume(fSolid[_GAS], fDetPar[_GAS]->Material, fDetPar[_GAS]->Name);
+  fPhysc[_GAS] = new G4PVPlacement(0,
+      G4ThreeVector(fDetPar[_GAS]->Pos[0], fDetPar[_GAS]->Pos[1], fDetPar[_GAS]->Pos[2]),
+      fLogic[_GAS], fDetPar[_GAS]->Name, fLogic[_CERAMICS], false, 0, checkOverlaps);      
+
+  fLogic[_WORLD]->SetVisAttributes(G4VisAttributes::Invisible);
+  fLogic[_CERAMICS]->SetVisAttributes(fDetPar[_CERAMICS]->visAtt);
+  fLogic[_GAS]->SetVisAttributes(fDetPar[_GAS]->visAtt);
+  fLogic[_WINDOW]->SetVisAttributes(fDetPar[_WINDOW]->visAtt);
+  fLogic[_SCOPE_INNER]->SetVisAttributes(fDetPar[_SCOPE_INNER]->visAtt);
+  fLogic[_SCOPE_OUTER]->SetVisAttributes(fDetPar[_SCOPE_OUTER]->visAtt);
+  fLogic[_SHELL_INNER]->SetVisAttributes(fDetPar[_SHELL_INNER]->visAtt);
+  fLogic[_SHELL_OUTER]->SetVisAttributes(fDetPar[_SHELL_OUTER]->visAtt);
+
+  return fPhysc[_WORLD];  
+
+}
+
+void MyDetectorConstruction::SetMaterial(int id, G4String materialName)
+{
+  if(verbose) G4cout << "====>MyDetectorConstruction::SetMaterial(int, G4String)" << G4endl;
+  
+  // search the material by its name, or build it from nist data base
+  G4Material* pttoMaterial = G4NistManager::Instance()->FindOrBuildMaterial(materialName);
+
+  fDetPar[id]->Matt = materialName;  
+
+  if (pttoMaterial && fDetPar[id]->Material != pttoMaterial) {
+    fDetPar[id]->Material = pttoMaterial;
+    if(fLogic[id]) fLogic[id]->SetMaterial(fDetPar[id]->Material);
+    G4RunManager::GetRunManager()->PhysicsHasBeenModified();
+  }
+}
+#if 0
+MyDetectorConstruction::MyDetectorConstruction()
+: G4VUserDetectorConstruction(),
+  /*fDetectorMessenger(0),*/ checkOverlaps(0)//,
+  // fWorldMaterial(0), fDetMaterial(0),
+  // solidWorld(0), solidDet(0),
+  // logicWorld(0), logicDet(0), 
+  // physcWorld(0), physcDet(0),
+  // world_size(1.*cm),
+  // det_x(0.4*cm), det_y(0.4*cm), det_z(0.2*cm)
 {
   if(verbose) G4cout << "====>MyDetectorConstruction::MyDetectorConstruction()" << G4endl;
   
-  // DefineMaterials();
   // fDetectorMessenger = new MyDetectorMessenger(this);
   
   // Material 
@@ -79,16 +308,9 @@ MyDetectorConstruction::MyDetectorConstruction()
   fWorldMaterial = Galactic;
   fDetMaterial = He_20_DME_80_P0_5;
 }
+#endif
 
-MyDetectorConstruction::~MyDetectorConstruction(){}
-// { delete fDetectorMessenger; }
-
-G4VPhysicalVolume* MyDetectorConstruction::Construct()
-{
-  if(verbose) G4cout << "====>MyDetectorConstruction::Construct()" << G4endl;
-  return DefineVolumes();  
-}
-
+#if 0 
 G4VPhysicalVolume* MyDetectorConstruction::DefineVolumes()
 {
   if(verbose) G4cout << "====>MyDetectorConstruction::DefineVolumes()" << G4endl;
@@ -139,7 +361,6 @@ G4VPhysicalVolume* MyDetectorConstruction::DefineVolumes()
 
   return physcWorld;
 }
-
 /*
 IF MESSENGER NEEDED
 void MyDetectorConstruction::Update()   //Update physWorld
@@ -147,6 +368,7 @@ void MyDetectorConstruction::Update()   //Update physWorld
   G4RunManager::GetRunManager()->ReinitializeGeometry(); 
   G4RunManager::GetRunManager()->DefineWorldVolume(DefineVolumes());
 }*/
+#endif
 
 #if 1
 void MyDetectorConstruction::DefineMaterials()
@@ -174,6 +396,7 @@ void MyDetectorConstruction::DefineMaterials()
   G4Element* F  = new G4Element("Fluorine", symbol="F",  z= 9, a=  19.00*g/mole);
   G4Element* Ne = new G4Element("Neon",     symbol="Ne", z=10, a=  20.17*g/mole);
   G4Element* Na = new G4Element("Sodium",   symbol="Na", z=11, a=  22.99*g/mole);
+  G4Element* Al = new G4Element("Aluminium",symbol="Al", z=13, a=  26.98*g/mole);
   G4Element* Si = new G4Element("Silicon",  symbol="Si", z=14, a=  28.09*g/mole);
   G4Element* S  = new G4Element("Sulfur",   symbol="S",  z=16.,a=  32.066*g/mole);
   G4Element* Ar = new G4Element("Argon",    symbol="Ar", z=18, a=  39.95*g/mole);
@@ -209,7 +432,6 @@ void MyDetectorConstruction::DefineMaterials()
   //
   // define simple materials
   //
-
   new G4Material("H2Liq"    , z= 1, a= 1.01*g/mole, density= 70.8*mg/cm3);
   new G4Material("Beryllium", z= 4, a= 9.01*g/mole, density= 1.848*g/cm3);
   new G4Material("Aluminium", z=13, a=26.98*g/mole, density= 2.700*g/cm3);
@@ -416,6 +638,11 @@ void MyDetectorConstruction::DefineMaterials()
   CF4_P10->AddElement(C, natoms=1);
   CF4_P10->AddElement(F, natoms=4);
 
+
+  G4Material* ceramics = new G4Material("ceramics", density = 2.88*g/cm3, ncomponents = 2);
+  ceramics->AddElement(Al,2);
+  ceramics->AddElement(O,3);
+
   //double rho_DME=0.00197, rho_He=0.0001786, rho_Ne=0.0009002, rho_CF4=0.00372;
   G4Material* DME = new G4Material("DME",density=0.00197*g/cm3,ncomponents=3);
   DME->AddElement(H,natoms=6);
@@ -487,35 +714,5 @@ void MyDetectorConstruction::DefineMaterials()
   Ne_95_CF4_5_P0_8->AddMaterial(CF4, fractionmass = 17.86*perCent);
 
   //G4cout << *(G4Material::GetMaterialTable()) << G4endl;
-}
-#endif
-
-#if 0
-
-
-
-
-G4VPhysicalVolume* MyDetectorConstruction::DefineVolumes()
-{
-  if(verbose) G4cout << "====>MyDetectorConstruction::DefineVolumes()" << G4endl;
-
-
-  // Cleanup old geometry
-  G4GeometryManager::GetInstance()->OpenGeometry();
-  G4PhysicalVolumeStore::GetInstance()->Clean();
-  G4LogicalVolumeStore::GetInstance()->Clean();
-  G4SolidStore::GetInstance()->Clean(); 
-}
-
-void MyDetectorConstruction::SetDistanceX(G4double x)
-{ DX = x; Update(); }
-
-void MyDetectorConstruction::SetDistanceZ(G4double z)
-{ DZ = z; Update(); }
-
-void MyDetectorConstruction::Update()   //Update physWorld
-{  
-  G4RunManager::GetRunManager()->ReinitializeGeometry(); 
-  G4RunManager::GetRunManager()->DefineWorldVolume(DefineVolumes());
 }
 #endif

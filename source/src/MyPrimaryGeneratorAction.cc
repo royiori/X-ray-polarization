@@ -62,7 +62,7 @@ void MyPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // G4double x0=0+X*(G4UniformRand()-0.5); 
   // G4double y0=0+Y*(G4UniformRand()-0.5);
 
-  G4double z0 = -0.5*cm;
+  G4double z0 = -5.*cm;
   fParticleGun->SetParticlePosition(G4ThreeVector(0,0,z0));
 ////////////////////////////////////////////////////////////////////////////////////////////////
   // fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0,0,1));
@@ -86,8 +86,8 @@ void MyPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   fParticleGun->SetParticlePolarization(polarization);
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  G4double energy = 2*keV;
-  fParticleGun->SetParticleEnergy(energy);
+  // G4double energy = 2*keV;
+  // fParticleGun->SetParticleEnergy(energy);
 
   fParticleGun->GeneratePrimaryVertex(anEvent);
 }

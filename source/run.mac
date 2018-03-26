@@ -2,10 +2,12 @@
 #/run/verbose 1
 #/vis/verbose 1
 #/process/verbose 1
-#/tracking/verbose 1
+/tracking/verbose 1
 #/process/eLoss/verbose 1
 
-#/gun/particle gamma
+/gun/particle mu-
+/gun/energy 10 GeV
+
 
 /run/initialize
-/run/beamOn 1000000
+/run/beamOn 1
