@@ -10,10 +10,14 @@ MyActionInitialization::MyActionInitialization()
  : G4VUserActionInitialization()
 {
   if(verbose) G4cout << "====>MyActionInitialization::MyActionInitialization()" << G4endl;
+
+  masterGPS = new G4GeneralParticleSource;
 }
 
 MyActionInitialization::~MyActionInitialization()
-{}
+{
+    delete masterGPS;
+}
 
 void MyActionInitialization::BuildForMaster() const
 {

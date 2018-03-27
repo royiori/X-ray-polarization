@@ -4,15 +4,18 @@
 #include "G4VUserActionInitialization.hh"
 
 class MyDetectorConstruction;
+class G4GeneralParticleSource;
 
 class MyActionInitialization : public G4VUserActionInitialization
 {
-	public:
+  public:
     MyActionInitialization();
-	  virtual ~MyActionInitialization();
+    virtual ~MyActionInitialization();
 
     virtual void BuildForMaster() const;
     virtual void Build() const;
+  private:
+    G4GeneralParticleSource* masterGPS;
 };
 
 #endif

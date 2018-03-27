@@ -23,9 +23,11 @@ using std::cos;
 
 MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()
  : G4VUserPrimaryGeneratorAction(),
-  fGunMessenger(0), fParticleGun(0), alpha(0), beta(0), polar(0)
+  fGunMessenger(0), fParticleGun(0), fParticleSourceGun(0), alpha(0), beta(0), polar(0)
 {
   if(verbose) G4cout << "====>MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()" << G4endl;
+
+  fPGorGPS = 0; // 0 for GPS, 1 for Particle Gun
 
   fGunMessenger = new MyGunMessenger(this);
   G4int n_particle = 1;
@@ -42,10 +44,30 @@ MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()
   // energy?
   // 2keV
 
-  G4double fPosZ=200;
+  G4double fPosZ= -5*cm;
 
   fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., fPosZ));  
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
+
+
+  //...... particle source gun
+  fParticleSourceGun = new G4GeneralParticleSource();
+
+  fParticleSourceGun->SetParticleDefinition(particle);
+
+  G4SPSEneDistribution *eneDist = fParticleSourceGun->GetCurrentSource()->GetEneDist() ;
+  eneDist->SetEnergyDisType("Mono");
+  eneDist->SetMonoEnergy(30.*MeV);
+  
+  G4SPSPosDistribution *posDist = fParticleSourceGun->GetCurrentSource()->GetPosDist() ;
+  posDist->SetPosDisType("Plane");
+  posDist->SetPosDisShape("Circle");
+  posDist->SetRadius(20.0*cm);
+  posDist->SetCentreCoords(G4ThreeVector(0.,0.,fPosZ));
+
+  G4SPSAngDistribution *angDist = fParticleSourceGun->GetCurrentSource()->GetAngDist() ;
+  angDist->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.)) ;
+
 }
 
 
@@ -89,7 +111,9 @@ void MyPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // G4double energy = 2*keV;
   // fParticleGun->SetParticleEnergy(energy);
 
-  fParticleGun->GeneratePrimaryVertex(anEvent);
+
+  if(fPGorGPS==1) fParticleGun->GeneratePrimaryVertex(anEvent);
+  else            fParticleSourceGun->GeneratePrimaryVertex(anEvent);  
 }
   // position
   // a random funtion

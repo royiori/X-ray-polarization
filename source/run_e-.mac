@@ -1,0 +1,58 @@
+#/control/verbose 1
+#/run/verbose 1
+#/vis/verbose 1
+#/process/verbose 1
+#/tracking/verbose 1
+#/process/eLoss/verbose 1
+
+#GPS macro file for e-
+/gps/particle e-
+/gps/pos/type Surface
+/gps/pos/shape Sphere
+/gps/pos/centre 0. 0. 0. cm
+/gps/pos/radius 5 cm
+/gps/ang/type cos
+#/gps/ang/mintheta 0
+#/gps/ang/maxtheta 360
+/gps/ene/type User
+/gps/hist/type energy
+/gps/hist/point 0.001 0
+/gps/hist/point 0.00135 22.6448
+/gps/hist/point 0.0018225 15.3297
+/gps/hist/point 0.00246038 10.3777
+/gps/hist/point 0.00332151 7.02532
+/gps/hist/point 0.00448403 4.75589
+/gps/hist/point 0.00605345 3.21957
+/gps/hist/point 0.00817215 2.17954
+/gps/hist/point 0.0110324 1.47547
+/gps/hist/point 0.0148937 0.998842
+/gps/hist/point 0.0201066 0.676181
+/gps/hist/point 0.0271439 0.457751
+/gps/hist/point 0.0366442 0.309881
+/gps/hist/point 0.0494697 0.209779
+/gps/hist/point 0.0667841 0.142013
+/gps/hist/point 0.0901585 0.0961376
+/gps/hist/point 0.121714 0.0650818
+/gps/hist/point 0.164314 0.0440581
+/gps/hist/point 0.221824 0.0298258
+/gps/hist/point 0.299462 0.020191
+/gps/hist/point 0.404274 0.0136686
+/gps/hist/point 0.545769 0.00925316
+/gps/hist/point 0.736789 0.00626406
+/gps/hist/point 0.994665 0.00424055
+/gps/hist/point 1.3428 0.0028707
+/gps/hist/point 1.81278 0.00194336
+/gps/hist/point 2.44725 0.00131559
+/gps/hist/point 3.30378 0.000890608
+/gps/hist/point 4.46011 0.00060291
+/gps/hist/point 6.02115 0.000408149
+/gps/hist/point 8.12855 0.000276302
+/gps/hist/point 10.9735 0.000187047
+/gps/hist/point 14.8143 0.000126624
+/gps/hist/point 19.9993 8.57202e-05
+/gps/hist/point 26.999 5.80295e-05
+/gps/hist/point 36.4487 3.9284e-05
+/gps/hist/point 49.2057 2.65939e-05
+/gps/hist/point 66.4277 1.80031e-05
+/gps/hist/point 89.6774 1.21875e-05
+/run/beamOn 691859

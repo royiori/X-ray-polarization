@@ -2,6 +2,7 @@
 #define MyPrimaryGeneratorAction_h 1
 
 #include "G4VUserPrimaryGeneratorAction.hh"
+#include "G4GeneralParticleSource.hh"
 #include "G4ParticleGun.hh"
 #include "globals.hh"
 
@@ -12,6 +13,7 @@
 #define PI 3.1415927
 
 class MyGunMessenger;
+class G4GeneralParticleSource;
 
 class MyPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
@@ -28,6 +30,10 @@ class MyPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   private:
     MyGunMessenger* fGunMessenger;   // messenger
     G4ParticleGun*  fParticleGun;    // G4 particle gun
+    G4GeneralParticleSource* fParticleSourceGun; // G4 particle source gun    
+
+    G4int                  fPGorGPS;
+    
     G4double alpha, beta, polar;     //degree
 };
 

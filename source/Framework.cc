@@ -16,6 +16,7 @@
 
 #include "G4EmLivermorePolarizedPhysics.hh"
 #include "G4VModularPhysicsList.hh"
+#include "QBBC.hh"
 
 #include "G4PhysListFactory.hh"
 #include "G4StepLimiterPhysics.hh"
@@ -54,7 +55,7 @@ int main(int argc,char** argv)
 
   // Physics ist
   // G4VModularPhysicsList* physicsList = new QBBC;
-#if 1  
+#if 0  
   // fEmPhysicsList = new G4EmLivermorePolarizedPhysics();
         
 //      G4VModularPhysicsList* phys = 0;
@@ -68,11 +69,14 @@ int main(int argc,char** argv)
   G4VModularPhysicsList* physicsList = factory.GetReferencePhysList("G4EmLivermorePolarizedPhysics");
   physicsList->RegisterPhysics(new G4StepLimiterPhysics());  */
 #endif
-#if 1
+#if 0
   G4VModularPhysicsList* physicsList = new G4VModularPhysicsList; 
   physicsList->RegisterPhysics(new G4EmLivermorePolarizedPhysics);
 #endif
-
+#if 1
+  G4VModularPhysicsList* physicsList = new QBBC;
+  physicsList->RegisterPhysics(new G4StepLimiterPhysics());
+#endif
   physicsList->SetVerboseLevel(1);
   runManager->SetUserInitialization(physicsList);
     

@@ -14,7 +14,13 @@ class SimEvent : public TObject
   public:
     SimEvent() { MyClear(); } 
     ~SimEvent() {}
-    void MyClear() { fMomentum = TVector3(0, 0, 0); fPhi = -1; };
+    void MyClear() 
+    { 
+      fMomentum = TVector3(0, 0, 0); 
+      fPhi = -1; 
+      EdepGas = 0; 
+      EdepSi = 0;
+    };
 
     void SetMomentumGetPhi(TVector3 momentum) 
     {
@@ -24,10 +30,19 @@ class SimEvent : public TObject
 
     TVector3 GetMomentum() { return fMomentum; }
     Float_t GetPhi() { return fPhi; }
+
+    void AddEdepGas(Float_t edep){ EdepGas += edep; }
+    void AddEdepSi (Float_t edep){ EdepSi  += edep; } 
+
+    Float_t GetEdepGas(){ return EdepGas;}
+    Float_t GetEdepSi() { return EdepSi;}
     
   private:
     TVector3 fMomentum;
     Float_t fPhi;
+    
+    Float_t EdepGas;
+    Float_t EdepSi;
 
     ClassDef(SimEvent, 1);
 };

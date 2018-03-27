@@ -51,7 +51,7 @@ void MyAnalysisManager::BeginOfEventAction(const G4Event*)
 void MyAnalysisManager::EndOfEventAction(const G4Event*)
 {
   if(verbose) G4cout << "====>MyAnalysisManager::EndOfEventAction(const G4Event* evt)" << G4endl;
-  if(fEvent->GetPhi()!=-1) fTree->Fill();
-  // fTree->Fill();  
+  // if(fEvent->GetPhi()!=-1) fTree->Fill();
+  fTree->Fill();  
   fEvent->MyClear();
 }

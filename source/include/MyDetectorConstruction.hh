@@ -17,6 +17,7 @@ class G4CSGSolid;
 #define _SCOPE_OUTER 5
 #define _SHELL_INNER 6
 #define _SHELL_OUTER 7
+#define _WAFER 8
 
 class MyDetectorParameters
 {
@@ -60,6 +61,8 @@ class MyDetectorConstruction : public G4VUserDetectorConstruction
     // fDetectorMessenger
 
     G4bool checkOverlaps;
+
+    G4UserLimits* fStepLimit;            // pointer to user step limits
 
     // G4Material*        fWorldMaterial;   // pointer to the world  material
     // G4Material*        fDetMaterial;     // pointer to the detector  material
