@@ -10,8 +10,12 @@
 /gps/pos/type Surface
 /gps/pos/shape Sphere
 /gps/pos/centre 0. 0. 0. cm
-/gps/pos/radius 5 cm
+##############################################
+# radius
+/gps/pos/radius 10 cm
 /gps/ang/type cos
+##############################################
+# Consider Blocking
 #/gps/ang/mintheta 0
 #/gps/ang/maxtheta 360
 /gps/ene/type User
@@ -55,4 +59,12 @@
 /gps/hist/point 49.2057 2.65939e-05
 /gps/hist/point 66.4277 1.80031e-05
 /gps/hist/point 89.6774 1.21875e-05
-/run/beamOn 691859
+
+/run/initialize
+#/run/beamOn 691859
+#/run/beamOn 2767436 
+
+/run/beamOn 100  
+
+# 10s 5cm  691859
+# 10s 10cm 2767436

@@ -115,6 +115,10 @@ set(FRAMEWORK_SCRIPTS
   init_vis.mac
   vis.mac
   run.mac
+  run_cxb.mac
+  run_e-.mac
+  run_e+.mac
+  run_proton.mac
   RootFileIO.C
   )
 
