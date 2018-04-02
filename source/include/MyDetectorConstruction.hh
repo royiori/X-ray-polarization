@@ -8,6 +8,8 @@
 
 class G4CSGSolid;
 
+class MyDetectorMessenger;
+
 #define SIZE 20
 #define _WORLD 0
 #define _GAS 1
@@ -55,10 +57,16 @@ class MyDetectorConstruction : public G4VUserDetectorConstruction
     void SetMaterial(int, G4String);
     // void Update();
 
+    G4double GetXSide() { return fDetPar[_GAS]->Siz[0]; }
+    G4double GetYSide() { return fDetPar[_GAS]->Siz[1]; }
+    G4double GetHeight(){ return fDetPar[_SCOPE_INNER]->Siz[2]*2; }
+    G4double GetZTop () { return fDetPar[_SHELL_OUTER]->Siz[2]+fDetPar[_SHELL_OUTER]->Pos[2]; }
+    // 注意方向
+
   private:
     void DefineMaterials();
 
-    // fDetectorMessenger
+    MyDetectorMessenger*  fDetectorMessenger;   // messenger
 
     G4bool checkOverlaps;
 

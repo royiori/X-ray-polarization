@@ -1,5 +1,6 @@
 #include "MyPrimaryGeneratorAction.hh"
 #include "MyGunMessenger.hh"
+#include "MyDetectorConstruction.hh"
 
 #include "G4LogicalVolumeStore.hh"
 #include "G4LogicalVolume.hh"
@@ -27,7 +28,8 @@ MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()
 {
   if(verbose) G4cout << "====>MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()" << G4endl;
 
-  fPGorGPS = 0; // 0 for GPS, 1 for Particle Gun
+  fPGorGPS = false; // false for GPS, true for Particle Gun
+  // default GPS
 
   fGunMessenger = new MyGunMessenger(this);
   G4int n_particle = 1;
@@ -78,54 +80,114 @@ MyPrimaryGeneratorAction::~MyPrimaryGeneratorAction()
 
 void MyPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-  // This function is called at the begining of event  
   if(verbose) G4cout << "====>MyPrimaryGeneratorAction::GeneratePrimaries()" << G4endl;
+  
+  //.. importance sampling for the detector injection direction.
+  const MyDetectorConstruction* constfDetector
+    = static_cast<const MyDetectorConstruction*>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+  MyDetectorConstruction* fDetector
+    = const_cast<MyDetectorConstruction*>(constfDetector);
 
-  // G4double x0=0+X*(G4UniformRand()-0.5); 
-  // G4double y0=0+Y*(G4UniformRand()-0.5);
+  //.. set position
+  G4double _x = fDetector->GetXSide();
+  G4double _y = fDetector->GetYSide();
+  G4double z0 = -fDetector->GetZTop();///
+  G4double h0 = fDetector->GetHeight();
 
-  G4double z0 = -5.*cm;
-  fParticleGun->SetParticlePosition(G4ThreeVector(0,0,z0));
+  G4double x0 = _x * 2*(G4UniformRand()-0.5);
+  G4double y0 = _y * 2*(G4UniformRand()-0.5);
+
+  fParticleGun->SetParticlePosition(G4ThreeVector(x0, y0, z0));
+
+  //.. set direction
+  G4int passFlag = 0;
+
+  G4double theta, phi;
+
+  while(!passFlag) {
+    theta = G4UniformRand() * PI / 2;
+    phi   = G4UniformRand() * PI * 2;
+
+    G4double x1 = x0 + h0 * sin(theta)*cos(phi);
+    G4double y1 = y0 + h0 * sin(theta)*sin(phi);
+
+    if( fabs(x1) < _x && fabs(y1) < _y) passFlag = 1;
+  }
+
+  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta)));
+
+  //.. set particle type, which is set by the messenger
+  //G4ParticleDefinition* particle = particleTable->FindParticle(particleName="e-");
+  //fParticleGun->SetParticleDefinition(particle);
+
+
+  //.. set particle energy
+  G4double energy = 2*keV;
+  if(hEvt!=NULL) energy = hEvt->GetRandom();
+
+  fParticleGun->SetParticleEnergy(energy);
+
+  // G4double z0 = -5.*cm;
+  // fParticleGun->SetParticlePosition(G4ThreeVector(0,0,z0));
 ////////////////////////////////////////////////////////////////////////////////////////////////
   // fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0,0,1));
   // fParticleGun->SetParticlePolarization(G4ThreeVector(1,0,0));
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-  //Spherical coordinate system
-  // alpha--theta beta--phi
-  // 2 degree vibration (amplitude), now just Uniform distribution, use Gaussian maybe
-  G4double alpha_ = alpha * (2*G4UniformRand()-1); 
-  G4double beta_ = beta, polar_ = polar;
-
-  // (cos(polar), sin(polar), 0)
-  G4ThreeVector direction   (sin(alpha_)*cos(beta_), sin(alpha_)*sin(beta_),  cos(alpha_));
-  // G4ThreeVector polarization(cos(alpha_)*cos(beta_), cos(alpha_)*sin(beta_), -sin(alpha_)); 
-  G4ThreeVector polarization (cos(alpha_)*cos(beta_)*cos(polar)-sin(beta_)*sin(polar_),
-                              cos(alpha_)*sin(beta_)*cos(polar)+cos(beta_)*sin(polar_),
-                             -sin(alpha_)*cos(polar_));
-  fParticleGun->SetParticleMomentumDirection(direction);
-  fParticleGun->SetParticlePolarization(polarization);
+////////////////////////////////////////////////////////////////////////////////////////////////
+//  //Spherical coordinate system
+//  // alpha--theta beta--phi
+//  // 2 degree vibration (amplitude), now just Uniform distribution, use Gaussian maybe
+//  G4double alpha_ = alpha * (2*G4UniformRand()-1); 
+//  G4double beta_ = beta, polar_ = polar;
+//
+//  // (cos(polar), sin(polar), 0)
+//  G4ThreeVector direction   (sin(alpha_)*cos(beta_), sin(alpha_)*sin(beta_),  cos(alpha_));
+//  // G4ThreeVector polarization(cos(alpha_)*cos(beta_), cos(alpha_)*sin(beta_), -sin(alpha_)); 
+//  G4ThreeVector polarization (cos(alpha_)*cos(beta_)*cos(polar)-sin(beta_)*sin(polar_),
+//                              cos(alpha_)*sin(beta_)*cos(polar)+cos(beta_)*sin(polar_),
+//                             -sin(alpha_)*cos(polar_));
+//  fParticleGun->SetParticleMomentumDirection(direction);
+//  fParticleGun->SetParticlePolarization(polarization);
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // G4double energy = 2*keV;
-  // fParticleGun->SetParticleEnergy(energy);
-
-
-  if(fPGorGPS==1) fParticleGun->GeneratePrimaryVertex(anEvent);
+  if(fPGorGPS == true) fParticleGun->GeneratePrimaryVertex(anEvent);
   else            fParticleSourceGun->GeneratePrimaryVertex(anEvent);  
 }
-  // position
-  // a random funtion
 
+void MyPrimaryGeneratorAction::SetParticleType(G4String ptype)
+{
+    ParticleType = ptype;
+    hFileName = ParticleType+G4String(".root");
 
+    if(hFile!=NULL) hFile->Close();    
 
+   if(gROOT->GetListOfFiles()->FindObject(hFileName))
+      hFile = (TFile*)gROOT->GetListOfFiles()->FindObject(hFileName);
+   else
+      hFile = new TFile(hFileName, "read");
+
+    if(!hFile->IsOpen()) hEvt = NULL;
+    else {
+      hEvt = (TH1D *)hFile->Get("hevt");
+      G4cout << "====>" << hFileName << " is open." << G4endl;
+
+      G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+      
+      G4ParticleDefinition* particle = particleTable->FindParticle(ParticleType="e-");
+     
+      if(ptype == "cxb")    particle = particleTable->FindParticle(ParticleType="gamma");
+      if(ptype == "e+")     particle = particleTable->FindParticle(ParticleType="e+");
+      if(ptype == "proton") particle = particleTable->FindParticle(ParticleType="proton");
+
+      fParticleGun->SetParticleDefinition(particle);
+    }
+}
 
 
 
 #if 0
-double gaisserr(double *x, double *par);
-
 MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()
 : G4VUserPrimaryGeneratorAction()
 {
@@ -162,83 +224,3 @@ MyPrimaryGeneratorAction::MyPrimaryGeneratorAction()
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
 }
 #endif
-
-#if 0
-
-MyPrimaryGeneratorAction::~MyPrimaryGeneratorAction()
-{
-  delete fParticleGun;
-}
-
-void MyPrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
-{
-  if(verbose) G4cout<<"====>MyPrimaryGeneratorAction::GeneratePrimaries()"<<G4endl;
-
-  G4double PI = 3.14159265358979323846;
-  double Emin , Emax;
-  Emin=0.03;
-  Emax=30.;
-
-  TF2 *muFlux = new TF2("muFlux", gaisserr, Emin, Emax, 0.1, 1.0, 0);
-  muFlux->SetNpx(1000); //Emu
-  muFlux->SetNpy(40);  //cosTh
-
-
-  G4double Emu, cTheta, theta, phi;
-
-  //Emu = 3;
-  //cTheta = 0.5;
-  muFlux->GetRandom2(Emu, cTheta);
- 
-  phi = G4UniformRand()*2*PI;
-  theta = acos(cTheta);
-
-  Emu*=GeV;
-
-#define X 90.*cm
-#define Y 130.*cm
-
-
-  G4double ang= G4UniformRand()*2*PI;
-  G4double x0=0+X*(G4UniformRand()-0.5); 
-  G4double y0=0+Y*(G4UniformRand()-0.5);
-  G4double z0 = -60.*cm;
-  fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
-
-  G4double x1 = std::sin(theta)*std::cos(phi);
-  G4double y1 = std::sin(theta)*std::sin(phi);
-  G4double z1 = std::cos(theta);
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(x1, y1, z1));
-
-  fParticleGun->SetParticleEnergy(Emu);
-
-  fParticleGun->GeneratePrimaryVertex(anEvent);
-}
-#endif
-/*
-double gaisserr(double *x, double *par){
-    double gaisser,emu, costh0;
-    double  costh,en1, t115, t850, A0, gamma, p1,p2,p3,p4,p5;
-
-    A0    = 0.14;
-    gamma = 2.7;
-    //     parameter( A0 = 0.260, gamma = 2.780)
-    p1 = 0.102573;
-    p2 = -0.068287;
-    p3 = 0.958633;
-    p4 = 0.0407253;
-    p5 = 0.817285;
-
-    emu=x[0];
-    costh0=x[1];
-    costh = sqrt((costh0*costh0+p1*p1+p2*pow(costh0,p3)+p4*pow(costh0,p5))/(1+p1*p1+p2+p4));
-
-    en1= emu*(1+3.63698/(emu*pow(costh,1.29685)));
-
-    t115 = 1.0  /( 1.0 + 1.10*emu*costh/115.0 );
-    t850 = 0.0540/( 1.0 + 1.10*emu*costh/850.0 );
-
-    gaisser = A0*(pow(en1,-gamma))*( t115 + t850 );
-    // --> cm^2 s sr GeV
-    return gaisser;
-}*/

@@ -64,7 +64,10 @@
 #/run/beamOn 5206
 #/run/beamOn 20824
 
-/run/beamOn 100  
+#/run/beamOn 100  
+/run/beamOn 208240
 
 # 10s 5cm  5206
 # 10s 10cm 20824
+
+# 超过1分钟 4w

@@ -5,6 +5,7 @@
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithADouble.hh"
+#include "G4UIcmdWithABool.hh"
 
 
 MyGunMessenger::MyGunMessenger(MyPrimaryGeneratorAction* PGA)
@@ -30,6 +31,13 @@ MyGunMessenger::MyGunMessenger(MyPrimaryGeneratorAction* PGA)
   fPolar = new G4UIcmdWithADouble("/MySimulation/gun/setPolar",this);
   fPolar->SetGuidance("Set Polar.");  
   fPolar->SetParameterName("polar",false);
+
+  fPGorGPS = new G4UIcmdWithABool("/MySimulation/gun/setPGorGPS",this);
+  fPGorGPS->SetGuidance("false = GPS, true = PG.");
+  fPGorGPS->SetParameterName("PG=true, GPS=false",false);
+
+  fPType = new G4UIcmdWithAString("/MySimulation/gun/setParticleType",this);
+  fPType->SetGuidance("Set particle type.");
 }
 
 MyGunMessenger::~MyGunMessenger()
@@ -41,6 +49,8 @@ MyGunMessenger::~MyGunMessenger()
   delete fAlpha;
   delete fBeta;
   delete fPolar;
+  delete fPGorGPS;
+  delete fPType;
 }
 
 void MyGunMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
@@ -51,4 +61,8 @@ void MyGunMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
   { fPrimaryGeneratorAction->SetBeta (fBeta ->GetNewDoubleValue(newValue)); }
   if(command == fPolar)
   { fPrimaryGeneratorAction->SetPolar(fPolar->GetNewDoubleValue(newValue)); }
+  if(command == fPGorGPS)
+  { fPrimaryGeneratorAction->SetPGorGPS(fPGorGPS->GetNewBoolValue(newValue));}
+  if (command == fPType)
+  { fPrimaryGeneratorAction->SetParticleType(newValue); }  
 }

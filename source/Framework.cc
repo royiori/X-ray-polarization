@@ -72,6 +72,7 @@ int main(int argc,char** argv)
 #if 0
   G4VModularPhysicsList* physicsList = new G4VModularPhysicsList; 
   physicsList->RegisterPhysics(new G4EmLivermorePolarizedPhysics);
+  // physicsList->RegisterPhysics(new G4StepLimiterPhysics());
 #endif
 #if 1
   G4VModularPhysicsList* physicsList = new QBBC;

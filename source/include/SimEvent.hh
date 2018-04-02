@@ -8,6 +8,9 @@
 #include <map>
 #include <vector>
 
+#define PAD_NUM 375
+#define SWITCH 0
+// Whether use PADS or not
 
 class SimEvent : public TObject
 {
@@ -20,6 +23,19 @@ class SimEvent : public TObject
       fPhi = -1; 
       EdepGas = 0; 
       EdepSi = 0;
+/////////////
+#if SWITCH
+      for(int i=0; i!=PAD_NUM; ++i){
+        for(int j=0; j!=PAD_NUM; ++j){
+          EdepPad[i][j]=0;
+        }
+      }
+      ECount = 0;
+#endif
+/////////////
+#if 1
+    count = 0;
+#endif 
     };
 
     void SetMomentumGetPhi(TVector3 momentum) 
@@ -32,12 +48,30 @@ class SimEvent : public TObject
     Float_t GetPhi() { return fPhi; }
 
     void AddEdepGas(Float_t edep){ EdepGas += edep; }
-    void AddEdepSi (Float_t edep){ EdepSi  += edep; } 
-
     Float_t GetEdepGas(){ return EdepGas;}
+  
+    void AddEdepSi (Float_t edep){ EdepSi  += edep; } 
     Float_t GetEdepSi() { return EdepSi;}
-    
+#if 1 
+    void AddCount(){ count+=1; }
+#endif
+
+/////////////
+#if SWITCH
+    void AddEdepPad (int x, int y, Float_t edep) { EdepPad[x][y] += edep; }
+    Float_t GetEdepPad (int x, int y) {  return EdepPad[x][y]; }
+
+    void AddECount() { ECount +=1; }
+    Int_t GetECount() { return ECount; }
   private:
+    Float_t EdepPad[PAD_NUM][PAD_NUM];
+    Int_t ECount; //Electron generated in Be
+#endif
+/////////////
+  private:
+#if 1
+    Float_t count; //Monte Carlo index
+#endif
     TVector3 fMomentum;
     Float_t fPhi;
     
@@ -47,54 +81,4 @@ class SimEvent : public TObject
     ClassDef(SimEvent, 1);
 };
 
-// inline void SimEvent::MyClear()
-// {
-  // Initialize to -1
-// }
-
-#if 0
-class SimEvent : public TObject
-{
-  public:
-
-    void SetTime(int n, Float_t t){ fT[n] = t; }
-    void SetPos(int n, TVector3 pos){ fPos[n] = pos; }
-    Float_t GetTime(int n){ return fT[n]; }
-    TVector3 GetPos(int n){ return fPos[n]; }
-    void AddTotalEdep(int n, Float_t edep){ fTotalEdep[n] = edep; }
-
-  private:
-    Float_t fT[9];
-    Float_t fTotalEdep[9];
-    TVector3 fPos[9];
-    ClassDef(SimEvent, 1);
-};
-
-inline void SimEvent::MyClear()
-{
-  for(int i=0; i!=9; ++i)
-  {
-    fT[i] = -1;
-    fTotalEdep[i] = 0;
-    fPos[i] = TVector3(0, 0, 0);
-  }
-};
 #endif
-#endif
-
-/*
-TWO WAYS:
-1 vectors
-  Saves all messages Step by Step, able to reconstruct every track.
-    
-  e/g.  
-    vector<Float_t> fTotalEdep; 
-    vector<Float_t> fT; 
-    vector<Tvector3> vPos;
-    And Get... Set... functions for them.
-
-2 array buf
-  Collect important messages.
-  e.g.
-    in this sim
-*/

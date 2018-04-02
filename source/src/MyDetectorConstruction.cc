@@ -1,5 +1,5 @@
 #include "MyDetectorConstruction.hh"
-// #include "MyDetectorMessenger.hh"
+#include "MyDetectorMessenger.hh"
 
 #include "G4Material.hh"
 #include "G4NistManager.hh"
@@ -31,8 +31,10 @@
 
 MyDetectorConstruction::MyDetectorConstruction()
 : G4VUserDetectorConstruction(),
- checkOverlaps(false)
+  fDetectorMessenger(0), checkOverlaps(false)
 {
+  if(verbose) G4cout << "====>MyDetectorConstruction::MyDetectorConstruction()" << G4endl;
+
   // Init
   for(int i=0;i<SIZE;i++) fDetPar[i] = new MyDetectorParameters();
   for(int i=0;i<SIZE;i++) fSolid[i]  = 0;  
@@ -58,7 +60,8 @@ G4double thickness=3*mm; //(1-10)
   fDetPar[_WORLD]->Material = NULL;
   
   fDetPar[_GAS]->Name   = "Gas";
-  fDetPar[_GAS]->Matt   = "He_20_DME_80";
+  // fDetPar[_GAS]->Matt   = "He_20_DME_80";
+  fDetPar[_GAS]->Matt   = "He_20_DME_80_P0_5";
   fDetPar[_GAS]->Siz[0] = 7.5*mm; 
   fDetPar[_GAS]->Siz[1] = 7.5*mm; 
   fDetPar[_GAS]->Siz[2] = 5*mm;
@@ -160,16 +163,29 @@ G4double thickness=3*mm; //(1-10)
   SetMaterial(_SHELL_INNER, fDetPar[_SHELL_INNER]->Matt);
   SetMaterial(_SHELL_OUTER, fDetPar[_SCOPE_OUTER]->Matt);
   SetMaterial(_WAFER,       fDetPar[_WAFER]->Matt);
+
+  fDetectorMessenger = new MyDetectorMessenger(this);
+
+/*
+  G4cout << "x:\t" << GetXSide() << G4endl;
+  G4cout << "y:\t" << GetYSide() << G4endl;
+  G4cout << "z:\t" << GetZTop() << G4endl;
+  G4cout << "h:\t" << GetHeight() << G4endl;
+*/         
 }
 
 
 MyDetectorConstruction::~MyDetectorConstruction()
-{}
-// { delete fDetectorMessenger; }
+{
+  delete fDetectorMessenger; 
+  delete fStepLimit;
+}
+
 
 G4VPhysicalVolume* MyDetectorConstruction::Construct()
 {
   if(verbose) G4cout << "====>MyDetectorConstruction::Construct()" << G4endl;
+
   return DefineVolumes();  
 }
 
@@ -260,9 +276,11 @@ G4VPhysicalVolume* MyDetectorConstruction::DefineVolumes()
   fLogic[_SHELL_OUTER]->SetVisAttributes(fDetPar[_SHELL_OUTER]->visAtt);
   fLogic[_WAFER]->SetVisAttributes(fDetPar[_WAFER]->visAtt);
 
-  G4double maxStep = 0.1*fDetPar[_GAS]->Siz[2];
+  // G4double maxStep = 0.02*fDetPar[_GAS]->Siz[2];
+  G4double maxStep = 0.02 * mm;
   fStepLimit = new G4UserLimits(maxStep);//, maxLength, maxTime, minEkin);
   fLogic[_GAS]->SetUserLimits(fStepLimit);
+  // fLogic[_WORLD]->SetUserLimits(fStepLimit);
 
   return fPhysc[_WORLD];  
 }

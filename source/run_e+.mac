@@ -64,7 +64,8 @@
 #/run/beamOn 157024
 #/run/beamOn 628096
 
-/run/beamOn 100  
+#/run/beamOn 100  
+/run/beamOn 6280960
 
 # 10s 5cm  157024
 # 10s 10cm 628096

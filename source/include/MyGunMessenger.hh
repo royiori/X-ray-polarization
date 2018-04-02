@@ -8,6 +8,7 @@ class MyPrimaryGeneratorAction;
 class G4UIdirectory;
 class G4UIcmdWithAString;
 class G4UIcmdWithADouble;
+class G4UIcmdWithABool;
 
 class MyGunMessenger: public G4UImessenger
 {
@@ -26,6 +27,11 @@ class MyGunMessenger: public G4UImessenger
     G4UIcmdWithADouble*  fAlpha;
     G4UIcmdWithADouble*  fBeta;
     G4UIcmdWithADouble*  fPolar;
+
+    G4UIcmdWithABool*  fPGorGPS;
+    // true = PG, false = GPS, default False
+    G4UIcmdWithAString* fPType;
+
 };
 
 #endif
