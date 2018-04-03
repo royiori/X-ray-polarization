@@ -276,12 +276,13 @@ G4VPhysicalVolume* MyDetectorConstruction::DefineVolumes()
   fLogic[_SHELL_OUTER]->SetVisAttributes(fDetPar[_SHELL_OUTER]->visAtt);
   fLogic[_WAFER]->SetVisAttributes(fDetPar[_WAFER]->visAtt);
 
+#if 0
   // G4double maxStep = 0.02*fDetPar[_GAS]->Siz[2];
   G4double maxStep = 0.02 * mm;
   fStepLimit = new G4UserLimits(maxStep);//, maxLength, maxTime, minEkin);
   fLogic[_GAS]->SetUserLimits(fStepLimit);
   // fLogic[_WORLD]->SetUserLimits(fStepLimit);
-
+#endif
   return fPhysc[_WORLD];  
 }
 

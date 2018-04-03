@@ -112,14 +112,14 @@ target_link_libraries(Framework SimEventDict ${Geant4_LIBRARIES} ${ROOT_LIBRARIE
 # relies on these scripts being in the current working directory.
 #
 set(FRAMEWORK_SCRIPTS
+  RootFileIO.C
   init_vis.mac
   vis.mac
-  run.mac
-  run_cxb.mac
-  run_e-.mac
-  run_e+.mac
-  run_proton.mac
-  RootFileIO.C
+  /mac/run.mac
+  /mac/run_cxb.mac
+  /mac/run_proton.mac
+  /mac/run_e-.mac
+  /mac/run_e+.mac
   )
 
 foreach(_script ${FRAMEWORK_SCRIPTS})

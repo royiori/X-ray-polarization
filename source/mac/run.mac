@@ -7,7 +7,9 @@
 
 /run/initialize
 
-/MySimulation/gun/setParticleType e-
+/MySimulation/gun/setParticleType cxb
+# pick from e- e+ cxb proton
+
 /MySimulation/gun/setPGorGPS true
 
 /run/beamOn 1000000

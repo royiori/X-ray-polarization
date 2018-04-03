@@ -30,10 +30,10 @@ class SimEvent : public TObject
           EdepPad[i][j]=0;
         }
       }
-      ECount = 0;
 #endif
 /////////////
 #if 1
+    ECount = 0;
     count = 0;
 #endif 
     };
@@ -54,6 +54,7 @@ class SimEvent : public TObject
     Float_t GetEdepSi() { return EdepSi;}
 #if 1 
     void AddCount(){ count+=1; }
+    void AddECount() { ECount +=1; }
 #endif
 
 /////////////
@@ -61,16 +62,15 @@ class SimEvent : public TObject
     void AddEdepPad (int x, int y, Float_t edep) { EdepPad[x][y] += edep; }
     Float_t GetEdepPad (int x, int y) {  return EdepPad[x][y]; }
 
-    void AddECount() { ECount +=1; }
     Int_t GetECount() { return ECount; }
   private:
     Float_t EdepPad[PAD_NUM][PAD_NUM];
-    Int_t ECount; //Electron generated in Be
 #endif
 /////////////
   private:
 #if 1
     Float_t count; //Monte Carlo index
+    Int_t ECount; //Electron generated in Be
 #endif
     TVector3 fMomentum;
     Float_t fPhi;

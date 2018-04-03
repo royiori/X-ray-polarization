@@ -43,7 +43,7 @@ void MySteppingAction::UserSteppingAction(const G4Step* step)
     //G4cout<< namePost << G4endl;
 
     G4Track* aTrack = step->GetTrack();
-  
+
     SimEvent *fEvt = MyAnalysisManager::GetInstance()->GetSimEvent();
 
   G4double edep = step->GetTotalEnergyDeposit();
@@ -62,6 +62,15 @@ void MySteppingAction::UserSteppingAction(const G4Step* step)
       fEvt->AddCount();
   }
   // calculate efficiency
+#endif
+
+   
+    // G4ParticleDefinition* particle = particleTable->FindParticle(ParticleType="e-");
+#if 1
+  if(aTrack->GetParticleDefinition()->GetParticleName()=="e-" && namePre == "Be" && namePost == "Gas")
+  {
+    fEvt->AddECount();
+  }
 #endif
 
 // Should be off if lots of beam on

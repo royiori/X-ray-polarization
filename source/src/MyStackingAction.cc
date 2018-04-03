@@ -49,34 +49,8 @@ G4ClassificationOfNewTrack MyStackingAction::ClassifyNewTrack(const G4Track* aTr
   TVector3 momentum(tmp.x(), tmp.y(), tmp.z());
   // 这里可以优化时间
 
-#if 1
-  if(aTrack->GetParentID() == 1)
-  {
-    fEvt->SetMomentumGetPhi(momentum);
-  }
+  if(aTrack->GetParentID() == 1) { fEvt->SetMomentumGetPhi(momentum); }
   // 最开始的momentum处理
-#endif
      
-#if 0
-  if(aTrack->GetParentID() == 0 && namePre == "World" && namePost=="Scope_I"){
-    // if(1) fEvt->AddCount();
-    ;
-  }
-#endif
-#if 0
-    G4cout << "x" << momentum.x() << G4endl;
-    G4cout << "y" << momentum.y() << G4endl;
-    G4cout << "z" << momentum.z() << G4endl;
-    
-    G4cout << "x" << tmp.x() << G4endl;
-    G4cout << "y" << tmp.y() << G4endl;
-    G4cout << "z" << tmp.z() << G4endl;    
-    G4cout << "x" << momentum.x() << G4endl;
-    G4cout << "y" << momentum.y() << G4endl;
-    G4cout << "z" << momentum.z() << G4endl;    
-    G4cout << "Phi" << fEvt->GetPhi() << G4endl;
-  }
-#endif  
-
   return fUrgent;
 }
